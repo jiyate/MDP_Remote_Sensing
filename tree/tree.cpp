@@ -36,13 +36,13 @@ int main(int argc, char* argv[]) {
    // create table for branch
    /* Create SQL statement */
    sql = "CREATE TABLE BRANCH("  \
-         "CENTERX             DOUBLE     NOT NULL," \
-         "CENTERY             DOUBLE     NOT NULL," \
-         "CENTERZ             DOUBLE     NOT NULL," \
-         "RADIUS              DOUBLE     NOT NULL," \
-         "LENGTH              DOUBLE     NOT NULL," \
-         "THETA               DOUBLE     NOT NULL," \
-         "PHI                 DOUBLE     NOT NULL);";
+         "CENTERX             STRING      NOT NULL," \
+         "CENTERY             STRING      NOT NULL," \
+         "CENTERZ             STRING      NOT NULL," \
+         "RADIUS              STRING      NOT NULL," \
+         "LENGTH              STRING      NOT NULL," \
+         "THETA               STRING      NOT NULL," \
+         "PHI                 STRING      NOT NULL);";
 
 
    /* Execute SQL statement */
@@ -59,13 +59,13 @@ int main(int argc, char* argv[]) {
    // create table for stemend
    /* Create SQL statement */
    sql = "CREATE TABLE STEMEND("  \
-         "CENTERX             DOUBLE     NOT NULL," \
-         "CENTERY             DOUBLE     NOT NULL," \
-         "CENTERZ             DOUBLE     NOT NULL," \
-         "RADIUS              DOUBLE     NOT NULL," \
-         "LENGTH              DOUBLE     NOT NULL," \
-         "THETA               DOUBLE     NOT NULL," \
-         "PHI                 DOUBLE     NOT NULL);";
+         "CENTERX             STRING     NOT NULL," \
+         "CENTERY             STRING     NOT NULL," \
+         "CENTERZ             STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "LENGTH              STRING     NOT NULL," \
+         "THETA               STRING     NOT NULL," \
+         "PHI                 STRING     NOT NULL);";
 
 
    /* Execute SQL statement */
@@ -82,14 +82,14 @@ int main(int argc, char* argv[]) {
    // create table for needle
    /* Create SQL statement */
    sql = "CREATE TABLE NEEDLE("  \
-         "STARTX              DOUBLE     NOT NULL," \
-         "STARTY              DOUBLE     NOT NULL," \
-         "STARTZ              DOUBLE     NOT NULL," \
-         "ENDX                DOUBLE     NOT NULL," \
-         "ENDY                DOUBLE     NOT NULL," \
-         "ENDZ                DOUBLE     NOT NULL," \
-         "RADIUS              DOUBLE     NOT NULL," \
-         "LENGTH              DOUBLE     NOT NULL);";
+         "STARTX              STRING     NOT NULL," \
+         "STARTY              STRING     NOT NULL," \
+         "STARTZ              STRING     NOT NULL," \
+         "ENDX                STRING     NOT NULL," \
+         "ENDY                STRING     NOT NULL," \
+         "ENDZ                STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "LENGTH              STRING     NOT NULL);";
 
 
    /* Execute SQL statement */
@@ -105,13 +105,13 @@ int main(int argc, char* argv[]) {
    // create table for leafA
    /* Create SQL statement */
    sql = "CREATE TABLE LEAFA("  \
-         "CENTERX             DOUBLE     NOT NULL," \
-         "CENTERY             DOUBLE     NOT NULL," \
-         "CENTERZ             DOUBLE     NOT NULL," \
-         "RADIUS              DOUBLE     NOT NULL," \
-         "THICKNESS           DOUBLE     NOT NULL," \
-         "THETA               DOUBLE     NOT NULL," \
-         "PHI                 DOUBLE     NOT NULL);";
+         "CENTERX             STRING     NOT NULL," \
+         "CENTERY             STRING     NOT NULL," \
+         "CENTERZ             STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "THICKNESS           STRING     NOT NULL," \
+         "THETA               STRING     NOT NULL," \
+         "PHI                 STRING     NOT NULL);";
 
 
    /* Execute SQL statement */
@@ -128,13 +128,13 @@ int main(int argc, char* argv[]) {
    // create table for leafB
    /* Create SQL statement */
    sql = "CREATE TABLE LEAFB("  \
-         "CENTERX             DOUBLE     NOT NULL," \
-         "CENTERY             DOUBLE     NOT NULL," \
-         "CENTERZ             DOUBLE     NOT NULL," \
-         "RADIUS              DOUBLE     NOT NULL," \
-         "THICKNESS           DOUBLE     NOT NULL," \
-         "THETA               DOUBLE     NOT NULL," \
-         "PHI                 DOUBLE     NOT NULL);";
+         "CENTERX             STRING     NOT NULL," \
+         "CENTERY             STRING     NOT NULL," \
+         "CENTERZ             STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "THICKNESS           STRING     NOT NULL," \
+         "THETA               STRING     NOT NULL," \
+         "PHI                 STRING     NOT NULL);";
 
 
    /* Execute SQL statement */
@@ -151,14 +151,14 @@ int main(int argc, char* argv[]) {
    // create table for needle
    /* Create SQL statement */
    sql = "CREATE TABLE LEAFSECTION("  \
-         "CENTERX              DOUBLE     NOT NULL," \
-         "CENTERY              DOUBLE     NOT NULL," \
-         "CENTERZ              DOUBLE     NOT NULL," \
-         "LENGTH               DOUBLE     NOT NULL," \
-         "WIDTH                DOUBLE     NOT NULL," \
-         "THICKNESS            DOUBLE     NOT NULL," \
-         "THETA                DOUBLE     NOT NULL," \
-         "PHI                  DOUBLE     NOT NULL);";
+         "CENTERX              STRING     NOT NULL," \
+         "CENTERY              STRING     NOT NULL," \
+         "CENTERZ              STRING     NOT NULL," \
+         "LENGTH               STRING     NOT NULL," \
+         "WIDTH                STRING     NOT NULL," \
+         "THICKNESS            STRING     NOT NULL," \
+         "THETA                STRING     NOT NULL," \
+         "PHI                  STRING     NOT NULL);";
 
 
    /* Execute SQL statement */
@@ -175,14 +175,14 @@ int main(int argc, char* argv[]) {
    string read;
    string command;
    char *command2;
-   double centerx;
-   double centery;
-   double centerz;
-   double radius;
-   double length;
-   double theta;
-   double phi;
-   double thickness;
+   string centerx;
+   string centery;
+   string centerz;
+   string radius;
+   string length;
+   string theta;
+   string phi;
+   string thickness;
    if (ifs.is_open()){
       while (getline(ifs, read)){
          istringstream line(read);
@@ -196,80 +196,13 @@ int main(int argc, char* argv[]) {
                line >> length;
                line >> theta;
                line >> phi;
-               // concatenate and insert into table branch
-               // USE ONE LINE INSTEAD
-               //command = "INSERT INTO " + "BRANCH" +" CENTERX " + centerx;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " CENTERX ";
-               command += centerx;
+
+               command = "INSERT INTO BRANCH (CENTERX, CENTERY, CENTERZ,\
+               RADIUS, LENGTH, THETA, PHI) VALUES (" + centerx +", "+
+               centery +", "+ centerz+", "+ radius +
+               ", "+ length +", "+ theta + ", "+ phi+");";
+               
                char *command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               // command = "INSERT INTO " + "BRANCH" +" CENTERY " + centery;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " CENTERY ";
-               command += centery;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               // command = "INSERT INTO " + "BRANCH" +" CENTERZ " + centerz;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " CENTERZ ";
-               command += centerz;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "BRANCH" +" RADIUS " + radius;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " RADIUS ";
-               command += radius;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "BRANCH" +" LENGTH " + length;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " LENGTH ";
-               command += length;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "BRANCH" +" THETA " + theta;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " THETA ";
-               command += theta;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "BRANCH" +" PHI " + phi;
-               command += "INSERT INTO ";
-               command += "BRANCH";
-               command += " PHI ";
-               command += phi;
-               command2 = new char[command.length() + 1];
                strcpy(command2, command.c_str());
                rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
                delete [] command2;
@@ -285,83 +218,18 @@ int main(int argc, char* argv[]) {
                line >> length;
                line >> theta;
                line >> phi;
-               // concatenate and insert into table stemend
-               //command = "INSERT INTO " + "STEMEND" +" CENTERX " + centerx;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " CENTERX ";
-               command += centerx;
+
+               command = "INSERT INTO STEMEND (CENTERX, CENTERY, CENTERZ,\
+               RADIUS, LENGTH, THETA, PHI) VALUES (" + centerx +", "+
+               centery +", "+ centerz+", "+ radius +
+               ", "+ length +", "+ theta + ", "+ phi+");";
+               
                char *command2 = new char[command.length() + 1];
                strcpy(command2, command.c_str());
                rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
                delete [] command2;
                command.clear();
-
-               //command = "INSERT INTO " + "STEMEND" +" CENTERY " + centery;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " CENTERY ";
-               command += centery;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "STEMEND" +" CENTERZ " + centerz;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " CENTERZ ";
-               command += centerz;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "STEMEND" +" RADIUS " + radius;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " RADIUS ";
-               command += radius;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "STEMEND" +" LENGTH " + length;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " LENGTH ";
-               command += length;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "STEMEND" +" THETA " + theta;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " THETA ";
-               command += theta;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "STEMEND" +" PHI " + phi;
-               command += "INSERT INTO ";
-               command += "STEMEND";
-               command += " PHI ";
-               command += phi;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
+               
                break;
             }
             else if (data == "leafA"){
@@ -372,85 +240,20 @@ int main(int argc, char* argv[]) {
                line >> thickness;
                line >> theta;
                line >> phi;
-               // concatenate and insert into table leafA
-               //command = "INSERT INTO " + "LEAFA" +" CENTERX " + centerx;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " CENTERX ";
-               command += centerx;
+
+               command = "INSERT INTO LEAFA (CENTERX, CENTERY, CENTERZ,\
+               RADIUS, THICKNESS, THETA, PHI) VALUES (" + centerx +", "+
+               centery +", "+ centerz+", "+ radius +
+               ", "+ thickness +", "+ theta + ", "+ phi+");";
+               
                char *command2 = new char[command.length() + 1];
                strcpy(command2, command.c_str());
                rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
                delete [] command2;
                command.clear();
 
-               //command = "INSERT INTO " + "LEAFA" +" CENTERY " + centery;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " CENTERY ";
-               command += centery;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFA" +" CENTERZ " + centerz;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " CENTERZ ";
-               command += centerz;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFA" +" RADIUS " + radius;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " RADIUS ";
-               command += radius;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFA" +" THICKNESS " + thickness;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " THICKNESS ";
-               command += thickness;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFA" +" THETA " + theta;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " THETA ";
-               command += theta;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFA" +" PHI " + phi;
-               command += "INSERT INTO ";
-               command += "LEAFA";
-               command += " PHI ";
-               command += phi;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
                break;
+               
             }
             else if (data == "leafB"){
                line >> centerx;
@@ -460,83 +263,18 @@ int main(int argc, char* argv[]) {
                line >> thickness;
                line >> theta;
                line >> phi;
-               // concatenate and insert into table leafB
-               //command = "INSERT INTO " + "LEAFB" +" CENTERX " + centerx;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " CENTERX ";
-               command += centerx;
+               
+               command = "INSERT INTO LEAFB (CENTERX, CENTERY, CENTERZ,\
+               RADIUS, THICKNESS, THETA, PHI) VALUES (" + centerx +", "+
+               centery +", "+ centerz+", "+ radius +
+               ", "+ thickness +", "+ theta + ", "+ phi+");";
+               
                char *command2 = new char[command.length() + 1];
                strcpy(command2, command.c_str());
                rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
                delete [] command2;
                command.clear();
 
-               //command = "INSERT INTO " + "LEAFB" +" CENTERY " + centery;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " CENTERY ";
-               command += centery;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFB" +" CENTERZ " + centerz;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " CENTERZ ";
-               command += centerz;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFB" +" RADIUS " + radius;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " RADIUS ";
-               command += radius;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFB" +" THICKNESS " + thickness;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " THICKNESS ";
-               command += thickness;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFB" +" THETA " + theta;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " THETA ";
-               command += theta;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
-
-               //command = "INSERT INTO " + "LEAFB" +" PHI " + phi;
-               command += "INSERT INTO ";
-               command += "LEAFB";
-               command += " PHI ";
-               command += phi;
-               command2 = new char[command.length() + 1];
-               strcpy(command2, command.c_str());
-               rc = sqlite3_exec(db, command2, callback, 0, &zErrMsg);
-               delete [] command2;
-               command.clear();
                break;
             }
             else{
