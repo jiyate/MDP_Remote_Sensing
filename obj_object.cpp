@@ -20,22 +20,15 @@
 void OBJ_object::init() {
     SQLite::Database db = file->open_sqldatabase(db_name);
     db.exec("CREATE TABLE v (x FLOAT, y FLOAT, z FLOAT, w FLOAT, PRIMARY KEY(x, y, z))");
+
+    db.exec("CREATE TABLE vn (i FLOAT, j FLOAT, k FLOAT, PRIMARY KEY(i, j, k))");
+    db.exec("CREATE TABLE vp (u FLOAT, v FLOAT, \
+                              w FLOAT, \
+                              PRIMARY KEY(u, v, w))"); //w default to 1.0
+    
+    db.exec("CREATE TABLE vt (u FLOAT, v FLOAT, w FLOAT, \
+                              PRIMARY KEY(u, v, w))");
     /*
-    sqldb->exec("CREATE TABLE vn (\
-                                  i FLOAT, \
-                                  j FLOAT, \
-                                  k FLOAT, \
-                                  PRIMARY(i, j, k))");
-    sqldb->exec("CREATE TABLE vp (\
-                                 u FLOAT, v FLOAT, \
-                                 w FLOAT, \
-                                 PRIMARY(u, v, w))"); //w default to 1.0
-    */
-    /*
-    sqldb->exec("CREATE TABLE vt (vtid BIGINT, \
-                                  u FLOAT NOT NULL, v FLOAT, w FLOAT, \
-                                  PRIMARY KEY(vtid), \
-                                  UNIQUE(u, v, w))");
     sqldb->exec("CREATE TABLE f (fid BIGINT, \
                                  v1 INTEGER NOT NULL, \
                                  vt1 INTEGER, vn1 INTEGER, \
@@ -107,7 +100,9 @@ void OBJ_object::read_obj_file(std::string filename) {
         std::string obj_file_line = "";
         // incase of int overflow, use long
         while(std::getline(obj_file, obj_file_line)) {
-            write_database(parse_line(obj_file_line));
+            if(!obj_file_line.empty()) {
+                write_database(parse_line(obj_file_line));
+            }
         }
     } else {
         std::cout << "ERROR opening file\n"; 
@@ -125,12 +120,28 @@ std::deque<std::string> OBJ_object::parse_line(std::string obj_file_line) {
 void OBJ_object::test_read_db(std::string table_name) {
     SQLite::Database db = file->open_sqldatabase(db_name);
     SQLite::Statement query(db, "SELECT * FROM " + table_name);
-    while(query.executeStep()) {
-        double x = query.getColumn(0);
-        double y = query.getColumn(1);
-        double z = query.getColumn(2);
-        double w = query.getColumn(3);
-        std::cout << table_name << " " << x << " " << y << " " << z << " " << w << "\n";
+    if(table_name == "v") {
+        while(query.executeStep()) {
+            double x = query.getColumn(0);
+            double y = query.getColumn(1);
+            double z = query.getColumn(2);
+            double w = query.getColumn(3);
+            std::cout << table_name << " " << x << " " << y << " " << z << " " << w << "\n";
+        }
+    } else if(table_name == "vn") {
+        while(query.executeStep()) {
+            double i = query.getColumn(0);
+            double j = query.getColumn(1);
+            double k = query.getColumn(2);
+            std::cout << table_name << " " << i << " " << j << " " << k << "\n";
+        }
+    } else if(table_name == "vt") {
+        while(query.executeStep()) {
+            double u = query.getColumn(0);
+            double v = query.getColumn(1);
+            double w = query.getColumn(2);
+            std::cout << table_name << " " << u << " " << v << " " << w << "\n";
+        }        
     }
 }
 
@@ -145,13 +156,15 @@ void OBJ_object::read_v(std::deque<std::string> components) {
     }
     db.exec("INSERT INTO v VALUES" + values);
 }
-/*
-void OBJ_object::read_vt(std::deque<std::string> components, Group &group) {
+
+void OBJ_object::read_vt(std::deque<std::string> components) {
+    SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
-    for(size_t i = 1; i < components.size() - 1; ++ i) {
-        values = values + components[i] + ", ";
+    std::string comma = "";
+    for(size_t i = 1; i < components.size(); ++ i) {
+        values = values + comma + components[i];
+        comma = ", ";
     }
-    values = values + components[components.size() - 1];
     if(components.size() == 4) {
         values = values + ")";
     } else if(components.size() == 3) {
@@ -160,18 +173,27 @@ void OBJ_object::read_vt(std::deque<std::string> components, Group &group) {
     } else { //components.size() == 2
         values = values + ", " + std::to_string(0.0) + ", " + std::to_string(0.0) + ")";
     }
-    sqldb.exec("INSERT INTO vt VALUES" + values);
+#ifdef DEBUG
+    std::cout << values << "\n";
+#endif
+    db.exec("INSERT INTO vt VALUES" + values);
 }
 
-void OBJ_object::read_vn(std::deque<std::string> components, Group &group) {
+void OBJ_object::read_vn(std::deque<std::string> components) {
+    SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
-    for(size_t i = 1; i < components.size() - 1; ++ i) {
-        values = values + components[i] + ", ";
+    std::string comma = "";
+    for(size_t i = 1; i < components.size(); ++ i) {
+        values = values + comma + components[i];
+        comma = ", ";
     }
-    values = values + components[components.size() - 1] + ")";
-    sqldb.exec("INSERT INTO vn VALUES" + values);
+    values = values + ")";
+#ifdef DEBUG
+    std::cout << values << "\n";
+#endif
+    db.exec("INSERT INTO vn VALUES" + values);
 }
-
+/*
 void OBJ_object::read_vp(std::deque<std::string> components, Group &group) {
     std::string values = "("; 
     for(size_t i = 1; i < components.size() - 1; ++ i) {
@@ -282,13 +304,14 @@ void OBJ_object::write_database(std::deque<std::string> components) {
     if(command == "v") { //geometric vertices
         read_v(components);
     } 
-    /*
+    
     else if (command == "vt") { //texture vertices
-        read_vt(components, group);
+        read_vt(components);
     } 
     else if (command == "vn") { //vertex normals
-        read_vn(components, group);
+        read_vn(components);
     } 
+    /*
     else if (command == "vp") { //parameter space vertices
         read_vp(components, group);
     } 

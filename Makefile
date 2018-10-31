@@ -174,6 +174,10 @@ test_main: test_main.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attri
 	       attributes.o obj_object.o -I${GEOSTAR_HOME}/src \
 	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
 
+test: test_main
+	rm ./test.h5
+	./test_main
+
 ## REMOVED -lrt from GDAL_LIBS   !!!!!!!!!!!!!!!!!!!
 ## had to do:
 ## ./configure --prefix=`pwd` --with-df5=/home/lep/MDP2/codes/demo9/hdf5-1.10.0-patch1 --without-hdf4
