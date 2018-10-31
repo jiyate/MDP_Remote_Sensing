@@ -18,10 +18,9 @@
 #include "obj_object.hpp"
 
 void OBJ_object::init() {
-    sqldb->exec("CREATE TABLE v (\
-                                 x FLOAT, y FLOAT, z FLOAT, \
-                                 w FLOAT, \
-                                 PRIMARY(x, y, z))");
+    SQLite::Database db = file->open_sqldatabase(db_name);
+    db.exec("CREATE TABLE v (x FLOAT, y FLOAT, z FLOAT, w FLOAT, PRIMARY KEY(x, y, z))");
+    /*
     sqldb->exec("CREATE TABLE vn (\
                                   i FLOAT, \
                                   j FLOAT, \
@@ -31,6 +30,7 @@ void OBJ_object::init() {
                                  u FLOAT, v FLOAT, \
                                  w FLOAT, \
                                  PRIMARY(u, v, w))"); //w default to 1.0
+    */
     /*
     sqldb->exec("CREATE TABLE vt (vtid BIGINT, \
                                   u FLOAT NOT NULL, v FLOAT, w FLOAT, \
@@ -46,6 +46,7 @@ void OBJ_object::init() {
                                  PRIMARY KEY(fid), \
                                  UNIQUE(v1, v2, v3))");
     */
+    /*
     sqldb->exec("CREATE TABLE s (Group_Number INTEGER, \
                                  PRIMARY KEY(Group_Number))"); //just for vertex normal vn
     sqldb->exec("CREATE TABLE o (Object_Name VARCHAR(30), \
@@ -77,7 +78,7 @@ void OBJ_object::init() {
                                    FOREIGN KEY(vpv) REFERENCES vp(v), \
                                    FOREIGN KEY(vpw) REFERENCES vp(w), \
                                    FOREIGN KEY(Group_Name) REFERENCES o(Group_Name))");
-
+    */
     /*
     sqldb->exec("CREATE TABLE usemtl (usemtlid BIGINT, \
                                       group_number TEXT, \
@@ -91,7 +92,8 @@ void OBJ_object::init() {
 
 OBJ_object::OBJ_object(std::string output_file_name) {
     file = new GeoStar::File(output_file_name, "new");
-    *sqldb = file->create_sqldatabase("/obj_sqldb");
+    db_name = "/obj_sqldb";
+    SQLite::Database db = file->create_sqldatabase(db_name);
     init();
 }
 
@@ -104,9 +106,8 @@ void OBJ_object::read_obj_file(std::string filename) {
     if(obj_file.is_open()) {
         std::string obj_file_line = "";
         // incase of int overflow, use long
-        long line_num = 0;
         while(std::getline(obj_file, obj_file_line)) {
-            write_database(parse_line(obj_file_line), line_num ++);
+            write_database(parse_line(obj_file_line));
         }
     } else {
         std::cout << "ERROR opening file\n"; 
@@ -117,24 +118,34 @@ std::deque<std::string> OBJ_object::parse_line(std::string obj_file_line) {
     std::istringstream iss(obj_file_line);
     std::deque<std::string> result(std::istream_iterator<std::string>{iss},
                                           std::istream_iterator<std::string>());
+
     return result;
 }
 
-void OBJ_object::read_v(std::deque<std::string> components, Group &group) {
-    std::string values = "(" + components[1] + components[2] + components[3]; 
-    if(components.size() == 5) {
-        values = values + components[4] + ")";
-    } else { //components.size() == 4
-        // The default value for w is 1.0
-        values = values + std::to_string(1.0) + ")";
-    }
-    sqldb.exec("INSERT INTO v VALUES" + values);
-
-    if(group.valid) {
-        sqldb.exec("INSERT INTO ov VALUES(" + components[1] + components[2] + components[3] + );
+void OBJ_object::test_read_db(std::string table_name) {
+    SQLite::Database db = file->open_sqldatabase(db_name);
+    SQLite::Statement query(db, "SELECT * FROM " + table_name);
+    while(query.executeStep()) {
+        double x = query.getColumn(0);
+        double y = query.getColumn(1);
+        double z = query.getColumn(2);
+        double w = query.getColumn(3);
+        std::cout << table_name << " " << x << " " << y << " " << z << " " << w << "\n";
     }
 }
 
+void OBJ_object::read_v(std::deque<std::string> components) {
+    SQLite::Database db = file->open_sqldatabase(db_name);
+    std::string values = "(" + components[1] + ", " + components[2] + ", " + components[3]; 
+    if(components.size() == 5) {
+        values = values + ", " + components[4] + ")";
+    } else { //components.size() == 4
+        // The default value for w is 1.0
+        values = values + ", " + std::to_string(1.0) + ")";
+    }
+    db.exec("INSERT INTO v VALUES" + values);
+}
+/*
 void OBJ_object::read_vt(std::deque<std::string> components, Group &group) {
     std::string values = "("; 
     for(size_t i = 1; i < components.size() - 1; ++ i) {
@@ -173,7 +184,7 @@ void OBJ_object::read_vp(std::deque<std::string> components, Group &group) {
     sqldb.exec("INSERT INTO vp VALUES" + values + ")");
 }
 
-
+*/
 /*
 void OBJ_object::read_f(std::string &values,
                         std::deque<std::string> components) {
@@ -192,7 +203,7 @@ void OBJ_object::read_f(std::string &values,
     }
     values = values + ")";
 }
-*/
+
 void OBJ_object::read_o(std::deque<std::string> components, Group &group) {
     std::string values = "("; 
     values = values + "'" + components[1] + "')";
@@ -238,6 +249,7 @@ void OBJ_object::read_mg(std::deque<std::string> components, Group &group) {
     }
     group.group_type = "mg";
 }
+*/
 
 /*
 void OBJ_object::read_usemtl(std::string &values,
@@ -264,21 +276,26 @@ void OBJ_object::write_database(std::deque<std::string> components) {
     // use line numebr as the unique id
     std::string table_name = "";
     std::string values = "(";
-    std::string command = components[1];
+    std::string command = components[0];
     Group group;
-
     // Vertex data line 251
     if(command == "v") { //geometric vertices
-        read_v(components, group);
-    } else if (command == "vt") { //texture vertices
+        read_v(components);
+    } 
+    /*
+    else if (command == "vt") { //texture vertices
         read_vt(components, group);
-    } else if (command == "vn") { //vertex normals
+    } 
+    else if (command == "vn") { //vertex normals
         read_vn(components, group);
-    } else if (command == "vp") { //parameter space vertices
+    } 
+    else if (command == "vp") { //parameter space vertices
         read_vp(components, group);
-    } /*else if ("cstype") { // rational or non-rational forms of curve or surface type
+    } 
+    else if ("cstype") { // rational or non-rational forms of curve or surface type
         
-    } else if("deg") { //degree
+    } 
+    else if("deg") { //degree
         
     }*//*("bmat"): //basis matrix
         break;
@@ -314,7 +331,7 @@ void OBJ_object::write_database(std::deque<std::string> components) {
         break;
     // Connectivity between free-form surfaces
     case("con"): //connect
-        break;*/
+        break;
     // Grouping line 1572
     else if(command == "g") { //group name
         read_g(components, group);
@@ -324,7 +341,7 @@ void OBJ_object::write_database(std::deque<std::string> components) {
         read_mg(components, group);
     } else if(command == "o") { //object name
         read_o(components, group);
-    } /*
+    } 
     // Display/render attributes
     case("bevel"): //bevel interpolation
         break;

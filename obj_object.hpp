@@ -15,6 +15,7 @@
 
 struct Group {
     std::string group_type = "";
+    std::deque<std::string> groups;
     bool valid = false;
 };
 
@@ -23,14 +24,16 @@ public:
     OBJ_object(std::string filename);
     ~OBJ_object();
     void read_obj_file(std::string filename);
-
+    void test_read_db(std::string table_name);
 private:
     GeoStar::File *file;
-    SQLite::Database *sqldb;
+    std::string db_name;
     void init();
     std::deque<std::string> parse_line(std::string obj_file_line);
-    void write_database(std::deque<std::string>, long line_num);
-    void read_v(std::deque<std::string> components, Group &group);
+    void write_database(std::deque<std::string>);
+    void read_v(std::deque<std::string> components);
+
+    /*
     void read_vt(std::deque<std::string> components, Group &group);
     void read_vn(std::deque<std::string> components, Group &group);
     void read_g(std::deque<std::string> components, Group &group);
@@ -40,6 +43,7 @@ private:
     void read_mg(std::deque<std::string> components, Group &group);
     void read_usemtl(std::deque<std::string> components);
     void read_mtllib(std::deque<std::string> components);
+    */
 };
 
 #endif
