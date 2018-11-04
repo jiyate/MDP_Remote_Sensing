@@ -178,5 +178,85 @@ int main(int argc, char* argv[]) {
 
    ifs.close();
 
+   { // scope the query, so it is deleted at end of scope.
+      SQLite::Statement   query(db, "SELECT * FROM BRANCH");
+      
+      cout<< "Info of BRANCH printed out:"<<endl;
+      while (query.executeStep())
+        {
+          // Demonstrate how to get some typed column value
+          string centerx      = query.getColumn(0);
+          string centery      = query.getColumn(1);
+          string centerz      = query.getColumn(2);
+          string radius       = query.getColumn(3);
+          string length       = query.getColumn(4);
+          string theta        = query.getColumn(5);
+          string phi          = query.getColumn(6);
+          
+          cout << centerx << " " centery << " " << centerz << " "
+          << radius << " " << length << " " << theta << " " << phi << endl;
+        }//end-while
+    } //end of scope for query.
+
+    { // scope the query, so it is deleted at end of scope.
+      SQLite::Statement   query(db, "SELECT * FROM STEMEND");
+      
+      cout<< "Info of STEMEND printed out:"<<endl;
+      while (query.executeStep())
+        {
+          // Demonstrate how to get some typed column value
+          string centerx      = query.getColumn(0);
+          string centery      = query.getColumn(1);
+          string centerz      = query.getColumn(2);
+          string radius       = query.getColumn(3);
+          string length       = query.getColumn(4);
+          string theta        = query.getColumn(5);
+          string phi          = query.getColumn(6);
+          
+          cout << centerx << " " centery << " " << centerz << " "
+          << radius << " " << length << " " << theta << " " << phi << endl;
+        }//end-while
+    } //end of scope for query.
+
+    { // scope the query, so it is deleted at end of scope.
+      SQLite::Statement   query(db, "SELECT * FROM LEAFA");
+      
+      cout<< "Info of LEAFA printed out:"<<endl;
+      while (query.executeStep())
+        {
+          // Demonstrate how to get some typed column value
+          string centerx      = query.getColumn(0);
+          string centery      = query.getColumn(1);
+          string centerz      = query.getColumn(2);
+          string radius       = query.getColumn(3);
+          string thickness    = query.getColumn(4);
+          string theta        = query.getColumn(5);
+          string phi          = query.getColumn(6);
+          
+          cout << centerx << " " centery << " " << centerz << " "
+          << radius << " " << thickness << " " << theta << " " << phi << endl;
+        }//end-while
+    } //end of scope for query.
+
+    { // scope the query, so it is deleted at end of scope.
+      SQLite::Statement   query(db, "SELECT * FROM LEAFB");
+      
+      cout<< "Info of LEAFB printed out:"<<endl;
+      while (query.executeStep())
+        {
+          // Demonstrate how to get some typed column value
+          string centerx      = query.getColumn(0);
+          string centery      = query.getColumn(1);
+          string centerz      = query.getColumn(2);
+          string radius       = query.getColumn(3);
+          string thickness    = query.getColumn(4);
+          string theta        = query.getColumn(5);
+          string phi          = query.getColumn(6);
+          
+          cout << centerx << " " centery << " " << centerz << " "
+          << radius << " " << thickness << " " << theta << " " << phi << endl;
+        }//end-while
+    } //end of scope for query.
+
    return 0;
 }
