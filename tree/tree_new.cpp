@@ -182,6 +182,7 @@ int main(int argc, char* argv[]) {
       SQLite::Statement   query(db, "SELECT * FROM BRANCH");
       
       cout<< "Info of BRANCH printed out:"<<endl;
+
       while (query.executeStep())
         {
           // Demonstrate how to get some typed column value
@@ -193,8 +194,7 @@ int main(int argc, char* argv[]) {
           string theta        = query.getColumn(5);
           string phi          = query.getColumn(6);
           
-          cout << centerx << " " centery << " " << centerz << " "
-          << radius << " " << length << " " << theta << " " << phi << endl;
+          cout << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << endl;
         }//end-while
     } //end of scope for query.
 
@@ -213,8 +213,7 @@ int main(int argc, char* argv[]) {
           string theta        = query.getColumn(5);
           string phi          = query.getColumn(6);
           
-          cout << centerx << " " centery << " " << centerz << " "
-          << radius << " " << length << " " << theta << " " << phi << endl;
+          cout << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << endl;
         }//end-while
     } //end of scope for query.
 
@@ -233,8 +232,7 @@ int main(int argc, char* argv[]) {
           string theta        = query.getColumn(5);
           string phi          = query.getColumn(6);
           
-          cout << centerx << " " centery << " " << centerz << " "
-          << radius << " " << thickness << " " << theta << " " << phi << endl;
+          cout << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << endl;
         }//end-while
     } //end of scope for query.
 
@@ -253,8 +251,7 @@ int main(int argc, char* argv[]) {
           string theta        = query.getColumn(5);
           string phi          = query.getColumn(6);
           
-          cout << centerx << " " centery << " " << centerz << " "
-          << radius << " " << thickness << " " << theta << " " << phi << endl;
+          cout << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << endl;
         }//end-while
     } //end of scope for query.
 
