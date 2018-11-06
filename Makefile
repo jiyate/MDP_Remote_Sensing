@@ -90,6 +90,8 @@ STD=-std=c++11
 
 DEBUG=-g
 
+CPPDEBUG=-DDEBUG
+
 CPPFLAGS=-DSPATIALITECPP_PTRTYPE=4
 
 clean:
@@ -162,7 +164,7 @@ Shape.o: Shape.cpp Shape.hpp File.hpp Exceptions.hpp attributes.hpp
 
 
 obj_object.o: obj_object.cpp obj_object.hpp File.hpp Exceptions.hpp attributes.hpp
-	g++ ${DEBUG} ${STD} ${CPPFLAGS} -c -o obj_object.o obj_object.cpp ${INCL}
+	g++ ${DEBUG} ${STD} ${CPPFLAGS} -c -o obj_object.o obj_object.cpp ${INCL} #${CPPDEBUG}
 
 
 
@@ -175,6 +177,7 @@ test_main: test_main.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attri
 	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
 
 test: test_main
+	rm obj_object.o
 	rm ./test.h5
 	./test_main
 

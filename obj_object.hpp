@@ -34,6 +34,7 @@ private:
     void read_v(std::deque<std::string> components);
     void read_vt(std::deque<std::string> components);
     void read_vn(std::deque<std::string> components);
+    void read_vp(std::deque<std::string> components);
     /*
     void read_g(std::deque<std::string> components, Group &group);
     void read_s(std::deque<std::string> components, Group &group);

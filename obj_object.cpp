@@ -22,8 +22,7 @@ void OBJ_object::init() {
     db.exec("CREATE TABLE v (x FLOAT, y FLOAT, z FLOAT, w FLOAT, PRIMARY KEY(x, y, z))");
 
     db.exec("CREATE TABLE vn (i FLOAT, j FLOAT, k FLOAT, PRIMARY KEY(i, j, k))");
-    db.exec("CREATE TABLE vp (u FLOAT, v FLOAT, \
-                              w FLOAT, \
+    db.exec("CREATE TABLE vp (u FLOAT, v FLOAT, w FLOAT, \
                               PRIMARY KEY(u, v, w))"); //w default to 1.0
     
     db.exec("CREATE TABLE vt (u FLOAT, v FLOAT, w FLOAT, \
@@ -142,6 +141,13 @@ void OBJ_object::test_read_db(std::string table_name) {
             double w = query.getColumn(2);
             std::cout << table_name << " " << u << " " << v << " " << w << "\n";
         }        
+    } else if(table_name == "vp") {
+        while(query.executeStep()) {
+            double u = query.getColumn(0);
+            double v = query.getColumn(1);
+            double w = query.getColumn(2);
+            std::cout << table_name << " " << u << " " << v << " " << w << "\n";
+        }        
     }
 }
 
@@ -193,20 +199,26 @@ void OBJ_object::read_vn(std::deque<std::string> components) {
 #endif
     db.exec("INSERT INTO vn VALUES" + values);
 }
-/*
-void OBJ_object::read_vp(std::deque<std::string> components, Group &group) {
+
+void OBJ_object::read_vp(std::deque<std::string> components) {
+    SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
-    for(size_t i = 1; i < components.size() - 1; ++ i) {
-        values = values + components[i] + ", ";
+    std::string comma = "";
+    for(size_t i = 1; i < components.size(); ++ i) {
+        values = values + comma + components[i];
+        comma = ", ";
     }
-    values = values + components[components.size() - 1];
+#ifdef DEBUG 
+	std::cout << values << "\n";
+	std::cout << components.size() << "\n";
+#endif
     if(components.size() == 3) {
-        values = values + "1.0";
+        values = values + ", 1.0";
     } 
-    sqldb.exec("INSERT INTO vp VALUES" + values + ")");
+    db.exec("INSERT INTO vp VALUES" + values + ")");
 }
 
-*/
+
 /*
 void OBJ_object::read_f(std::string &values,
                         std::deque<std::string> components) {
@@ -311,10 +323,10 @@ void OBJ_object::write_database(std::deque<std::string> components) {
     else if (command == "vn") { //vertex normals
         read_vn(components);
     } 
-    /*
     else if (command == "vp") { //parameter space vertices
-        read_vp(components, group);
+        read_vp(components);
     } 
+    /*
     else if ("cstype") { // rational or non-rational forms of curve or surface type
         
     } 
