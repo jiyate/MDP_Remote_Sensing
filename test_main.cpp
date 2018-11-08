@@ -9,4 +9,5 @@ int main(int argc, char** argv) {
 	test_obj.test_read_db("vt");
 	test_obj.test_read_db("vn");
 	test_obj.test_read_db("vp");
+	test_obj.test_read_db("f");
 }

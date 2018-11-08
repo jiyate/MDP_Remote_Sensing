@@ -19,25 +19,27 @@
 
 void OBJ_object::init() {
     SQLite::Database db = file->open_sqldatabase(db_name);
-    db.exec("CREATE TABLE v (x FLOAT, y FLOAT, z FLOAT, w FLOAT, PRIMARY KEY(x, y, z))");
-
-    db.exec("CREATE TABLE vn (i FLOAT, j FLOAT, k FLOAT, PRIMARY KEY(i, j, k))");
+    db.exec("CREATE TABLE v (x FLOAT, y FLOAT, z FLOAT, w FLOAT, \
+		                     ref_num INTEGER NOT NULL, \
+			                 PRIMARY KEY(x, y, z), \
+							 UNIQUE(ref_num))");
+    db.exec("CREATE TABLE vn (i FLOAT, j FLOAT, k FLOAT, \
+		                      ref_num INTEGER NOT NULL, \
+			                  PRIMARY KEY(i, j, k), \
+							  UNIQUE(ref_num))");
     db.exec("CREATE TABLE vp (u FLOAT, v FLOAT, w FLOAT, \
-                              PRIMARY KEY(u, v, w))"); //w default to 1.0
-    
+                              PRIMARY KEY(u, v, w))"); 
+							  //w default to 1.0
     db.exec("CREATE TABLE vt (u FLOAT, v FLOAT, w FLOAT, \
-                              PRIMARY KEY(u, v, w))");
-    /*
-    sqldb->exec("CREATE TABLE f (fid BIGINT, \
-                                 v1 INTEGER NOT NULL, \
-                                 vt1 INTEGER, vn1 INTEGER, \
-                                 v2 INTEGER NOT NULL, \
-                                 vt2 INTEGER, vn2 INTEGER, \
-                                 v3 INTEGER NOT NULL, \
-                                 vt3 INTEGER, vn3 INTEGER, \
-                                 PRIMARY KEY(fid), \
-                                 UNIQUE(v1, v2, v3))");
-    */
+	                          ref_num INTEGER NOT NULL, \
+                              PRIMARY KEY(u, v, w), \
+							  UNIQUE(ref_num))");
+	db.exec("CREATE TABLE fv (v INTEGER, vt INTEGER, vn INTEGER, \
+		                      f_id INTEGER NOT NULL, \
+		                      PRIMARY KEY(v, vt, vn), \
+							  FOREIGN KEY(f_id) REFERENCES f(f_id))");
+    db.exec("CREATE TABLE f (f_id INTEGER, \
+                      	     PRIMARY KEY(f_id))");
     /*
     sqldb->exec("CREATE TABLE s (Group_Number INTEGER, \
                                  PRIMARY KEY(Group_Number))"); //just for vertex normal vn
@@ -148,23 +150,50 @@ void OBJ_object::test_read_db(std::string table_name) {
             double w = query.getColumn(2);
             std::cout << table_name << " " << u << " " << v << " " << w << "\n";
         }        
-    }
+	} else if(table_name == "f") {
+		std::deque<int> f_ids;
+		while(query.executeStep()) {
+            int f_id = query.getColumn(0);
+		    f_ids.push_back(f_id);
+		}
+		for(auto f_id : f_ids) {
+		    SQLite::Database fvdb = file->open_sqldatabase(db_name);
+		    SQLite::Statement fvquery(fvdb, "SELECT v, vt, vn \
+			    	                         FROM fv \
+				    					     WHERE fv.f_id = " +
+											 std::to_string(f_id) +
+					    				     " ORDER BY fv.f_id ASC");
+		    std::cout << table_name << " ";
+		    while(fvquery.executeStep()) {
+			    // v, vt, vn here are all ref_nums
+			    int v = fvquery.getColumn(0);
+			    int vt = fvquery.getColumn(1);
+			    int vn = fvquery.getColumn(2);
+			    std::cout << v << "/" << vt << "/" << vn << " ";
+		    }
+			std::cout << "\n";
+		}
+	}
 }
 
 void OBJ_object::read_v(std::deque<std::string> components) {
+	static int v_ref_num = 0;
     SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "(" + components[1] + ", " + components[2] + ", " + components[3]; 
     if(components.size() == 5) {
-        values = values + ", " + components[4] + ")";
+        values = values + ", " + components[4];
     } else { //components.size() == 4
         // The default value for w is 1.0
-        values = values + ", " + std::to_string(1.0) + ")";
+        values = values + ", " + std::to_string(1.0);
     }
-    db.exec("INSERT INTO v VALUES" + values);
+    db.exec("INSERT INTO v VALUES" + values + ", " + 
+			std::to_string(v_ref_num) + ")");
+	v_ref_num ++;
 }
 
 void OBJ_object::read_vt(std::deque<std::string> components) {
-    SQLite::Database db = file->open_sqldatabase(db_name);
+    static int vt_ref_num = 0;
+	SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
     std::string comma = "";
     for(size_t i = 1; i < components.size(); ++ i) {
@@ -172,32 +201,36 @@ void OBJ_object::read_vt(std::deque<std::string> components) {
         comma = ", ";
     }
     if(components.size() == 4) {
-        values = values + ")";
+        values = values;
     } else if(components.size() == 3) {
         // The default value for w is 1.0
-        values = values + ", " + std::to_string(0.0) + ")";
+        values = values + ", " + std::to_string(0.0);
     } else { //components.size() == 2
-        values = values + ", " + std::to_string(0.0) + ", " + std::to_string(0.0) + ")";
+        values = values + ", " + std::to_string(0.0) + ", " + std::to_string(0.0);
     }
 #ifdef DEBUG
     std::cout << values << "\n";
 #endif
-    db.exec("INSERT INTO vt VALUES" + values);
+    db.exec("INSERT INTO vt VALUES" + values + ", " + 
+			std::to_string(vt_ref_num) + ")");
+	vt_ref_num ++;
 }
 
 void OBJ_object::read_vn(std::deque<std::string> components) {
-    SQLite::Database db = file->open_sqldatabase(db_name);
+    static int vn_ref_num = 0;
+	SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
     std::string comma = "";
     for(size_t i = 1; i < components.size(); ++ i) {
         values = values + comma + components[i];
         comma = ", ";
     }
-    values = values + ")";
 #ifdef DEBUG
     std::cout << values << "\n";
 #endif
-    db.exec("INSERT INTO vn VALUES" + values);
+    db.exec("INSERT INTO vn VALUES" + values + ", " + 
+			 std::to_string(vn_ref_num) + ")");
+    vn_ref_num ++;
 }
 
 void OBJ_object::read_vp(std::deque<std::string> components) {
@@ -219,25 +252,22 @@ void OBJ_object::read_vp(std::deque<std::string> components) {
 }
 
 
-/*
-void OBJ_object::read_f(std::string &values,
-                        std::deque<std::string> components) {
-    std::string comma = "";
+void OBJ_object::read_f(std::deque<std::string> components) {
+	SQLite::Database db = file->open_sqldatabase(db_name);
+	static int f_id = 0;
+	db.exec("INSERT INTO f VALUES(" + std::to_string(f_id) + ")");
     for(size_t i = 1; i < components.size(); ++ i) {
         std::deque<std::string> elements;
+		std::string values = "INSERT INTO fv VALUES(";
         boost::split(elements, components[i], boost::is_any_of("/"));
         for(auto element : elements) {
-            if(element != "") {
-                values = values + comma + "NULL";
-            } else {
-                values = values + comma + element;
-            }
-            comma = ", ";
-        }    
+            values = values + element + ", ";
+        }
+		db.exec(values + std::to_string(f_id) + ")");
     }
-    values = values + ")";
+	f_id ++;
 }
-
+/*
 void OBJ_object::read_o(std::deque<std::string> components, Group &group) {
     std::string values = "("; 
     values = values + "'" + components[1] + "')";
@@ -341,10 +371,10 @@ void OBJ_object::write_database(std::deque<std::string> components) {
         break;
     case("l"): //line
         break; */
-    /*else if("f") { //face
+    else if("f") { //face
         table_name = "f";
-        read_f(values, components);
-    }*//*
+        read_f(components);
+    }/*
     case("curv"): //curve
         break;
     case("curv2"): //2D curve

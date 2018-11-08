@@ -177,7 +177,6 @@ test_main: test_main.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attri
 	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
 
 test: test_main
-	rm obj_object.o
 	rm ./test.h5
 	./test_main
 

@@ -19,6 +19,12 @@ struct Group {
     bool valid = false;
 };
 
+struct Ref_num {
+	long v;
+	long vt;
+	long vn;
+};
+
 class OBJ_object {
 public:
     OBJ_object(std::string filename);
@@ -28,6 +34,7 @@ public:
 private:
     GeoStar::File *file;
     std::string db_name;
+	Ref_num refs;
     void init();
     std::deque<std::string> parse_line(std::string obj_file_line);
     void write_database(std::deque<std::string>);
@@ -35,10 +42,11 @@ private:
     void read_vt(std::deque<std::string> components);
     void read_vn(std::deque<std::string> components);
     void read_vp(std::deque<std::string> components);
+    void read_f(std::deque<std::string> components);
     /*
     void read_g(std::deque<std::string> components, Group &group);
     void read_s(std::deque<std::string> components, Group &group);
-    void read_f(std::deque<std::string> components);
+
     void read_o(std::deque<std::string> components, Group &group);
     void read_mg(std::deque<std::string> components, Group &group);
     void read_usemtl(std::deque<std::string> components);
