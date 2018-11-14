@@ -40,47 +40,64 @@ void OBJ_object::init() {
 							  FOREIGN KEY(f_id) REFERENCES f(f_id))");
     db.exec("CREATE TABLE f (f_id INTEGER, \
                       	     PRIMARY KEY(f_id))");
-    /*
-    sqldb->exec("CREATE TABLE s (Group_Number INTEGER, \
-                                 PRIMARY KEY(Group_Number))"); //just for vertex normal vn
-    sqldb->exec("CREATE TABLE o (Object_Name VARCHAR(30), \
-                                 PRIMARY KEY(Object_Name))");
-    sqldb->exec("CREATE TABLE g (Group_Name VARCHAR(30), \
-                                 PRIMARY KEY(Group_Name))");
-    sqldb->exec("CREATE TABLE mg (Group_Name VARCHAR(30), \
-                                  res INTEGER NOT NULL,
-                                  PRIMARY KEY(Group_Name), \
-                                  CHECK(res > 0))"); //just for free form vp
-    sqldb->exec("CREATE TABLE ov (vx FLOAT, vy FLOAT, vz FLOAT, \
-                                  Group_Name VARCHAR(30) NOT NULL, \
-                                  PRIMARY KEY(vx, vy, vz), \
-                                  FOREIGN KEY(vx) REFERENCES v(x), \
-                                  FOREIGN KEY(vy) REFERENCES v(y), \
-                                  FOREIGN KEY(vz) REFERENCES v(z), \
-                                  FOREIGN KEY(Group_Name) REFERENCES o(Group_Name))");
-    sqldb->exec("CREATE TABLE ovn (vni FLOAT, vnj FLOAT, vnk FLOAT, \
-                                   Group_Name VARCHAR(30) NOT NULL, \
-                                   PRIMARY KEY(vni, vnj, vnk), \
-                                   FOREIGN KEY(vni) REFERENCES vn(i), \
-                                   FOREIGN KEY(vnj) REFERENCES vn(j), \
-                                   FOREIGN KEY(vnk) REFERENCES vn(k), \
-                                   FOREIGN KEY(Group_Name) REFERENCES o(Group_Name))");
-    sqldb->exec("CREATE TABLE ovp (vpu FLOAT, vpv FLOAT, vpw FLOAT, \
-                                   Group_Name VARCHAR(30) NOT NULL, \
-                                   PRIMARY KEY(vpu, vpv, vpw), \
-                                   FOREIGN KEY(vpu) REFERENCES vp(u), \
-                                   FOREIGN KEY(vpv) REFERENCES vp(v), \
-                                   FOREIGN KEY(vpw) REFERENCES vp(w), \
-                                   FOREIGN KEY(Group_Name) REFERENCES o(Group_Name))");
-    */
-    /*
-    sqldb->exec("CREATE TABLE usemtl (usemtlid BIGINT, \
-                                      group_number TEXT, \
-                                      PRIMARY KEY(usemtlid))");
-    sqldb->exec("CREATE TABLE mtllib (mtllibid BIGINT, \
-                                      files TEXT, \
-                                      PRIMARY KEY(mtllibid))");
-    */
+
+	//////////////////////Tree components/////////////////////////////
+	db.exec("CREATE TABLE BRANCH("  \
+         "CENTERX             STRING      NOT NULL," \
+         "CENTERY             STRING      NOT NULL," \
+         "CENTERZ             STRING      NOT NULL," \
+         "RADIUS              STRING      NOT NULL," \
+         "LENGTH              STRING      NOT NULL," \
+         "THETA               STRING      NOT NULL," \
+         "PHI                 STRING      NOT NULL)");
+
+   db.exec("CREATE TABLE STEMEND("  \
+         "CENTERX             STRING     NOT NULL," \
+         "CENTERY             STRING     NOT NULL," \
+         "CENTERZ             STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "LENGTH              STRING     NOT NULL," \
+         "THETA               STRING     NOT NULL," \
+         "PHI                 STRING     NOT NULL)");
+
+   db.exec("CREATE TABLE NEEDLE("  \
+         "STARTX              STRING     NOT NULL," \
+         "STARTY              STRING     NOT NULL," \
+         "STARTZ              STRING     NOT NULL," \
+         "ENDX                STRING     NOT NULL," \
+         "ENDY                STRING     NOT NULL," \
+         "ENDZ                STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "LENGTH              STRING     NOT NULL)");
+   
+   db.exec("CREATE TABLE LEAFA("  \
+         "CENTERX             STRING     NOT NULL," \
+         "CENTERY             STRING     NOT NULL," \
+         "CENTERZ             STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "THICKNESS           STRING     NOT NULL," \
+         "THETA               STRING     NOT NULL," \
+         "PHI                 STRING     NOT NULL)");
+
+   db.exec("CREATE TABLE LEAFB("  \
+         "CENTERX             STRING     NOT NULL," \
+         "CENTERY             STRING     NOT NULL," \
+         "CENTERZ             STRING     NOT NULL," \
+         "RADIUS              STRING     NOT NULL," \
+         "THICKNESS           STRING     NOT NULL," \
+         "THETA               STRING     NOT NULL," \
+         "PHI                 STRING     NOT NULL)");
+
+   db.exec("CREATE TABLE LEAFSECTION("  \
+         "CENTERX              STRING     NOT NULL," \
+         "CENTERY              STRING     NOT NULL," \
+         "CENTERZ              STRING     NOT NULL," \
+         "LENGTH               STRING     NOT NULL," \
+         "WIDTH                STRING     NOT NULL," \
+         "THICKNESS            STRING     NOT NULL," \
+         "THETA                STRING     NOT NULL," \
+         "PHI                  STRING     NOT NULL)");
+
 
 }
 
@@ -435,7 +452,76 @@ void OBJ_object::write_database(std::deque<std::string> components) {
         break;
     default:
     */
-    //std::string command = "INSERT INTO " + table_name + " VALUES " + values;
-    //sqldb->exec(command);
+
+    /////////////////Tree Components/////////////////////
+    if (data == "branch"){
+	   line >> centerx;
+	   line >> centery;
+	   line >> centerz;
+		line >> radius;
+	   line >> length;
+	   line >> theta;
+	   line >> phi;
+
+	   nb = db.exec("INSERT INTO BRANCH (CENTERX, CENTERY, CENTERZ,\
+	   RADIUS, LENGTH, THETA, PHI) VALUES (" + centerx +", "+
+	   centery +", "+ centerz+", "+ radius +
+	   ", "+ length +", "+ theta + ", "+ phi+")");
+
+	   break;
+	}
+	else if (data == "stemend"){
+	   line >> centerx;
+	   line >> centery;
+	   line >> centerz;
+	   line >> radius;
+	   line >> length;
+	   line >> theta;
+	   line >> phi;
+
+	   db.exec("INSERT INTO STEMEND (CENTERX, CENTERY, CENTERZ,\
+	   RADIUS, LENGTH, THETA, PHI) VALUES (" + centerx +", "+
+	   centery +", "+ centerz+", "+ radius +
+	   ", "+ length +", "+ theta + ", "+ phi+")");
+	   
+	   break;
+	}
+	else if (data == "leafA"){
+	   line >> centerx;
+	   line >> centery;
+	   line >> centerz;
+	   line >> radius;
+	   line >> thickness;
+	   line >> theta;
+	   line >> phi;
+
+	   db.exec("INSERT INTO LEAFA (CENTERX, CENTERY, CENTERZ,\
+	   RADIUS, THICKNESS, THETA, PHI) VALUES (" + centerx +", "+
+	   centery +", "+ centerz+", "+ radius +
+	   ", "+ thickness +", "+ theta + ", "+ phi+")");
+
+	   break;
+	   
+	}
+	else if (data == "leafB"){
+	   line >> centerx;
+	   line >> centery;
+	   line >> centerz;
+	   line >> radius;
+	   line >> thickness;
+	   line >> theta;
+	   line >> phi;
+
+	   db.exec("INSERT INTO LEAFB (CENTERX, CENTERY, CENTERZ,\
+	   RADIUS, THICKNESS, THETA, PHI) VALUES (" + centerx +", "+
+	   centery +", "+ centerz+", "+ radius +
+	   ", "+ thickness +", "+ theta + ", "+ phi+")");
+
+	   break;
+	}
+	else{
+	   break;
+	}
+
 }
 
