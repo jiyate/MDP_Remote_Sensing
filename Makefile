@@ -176,9 +176,14 @@ test_main: test_main.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attri
 	       attributes.o obj_object.o -I${GEOSTAR_HOME}/src \
 	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
 
-test: test_main
-	rm ./test.h5
-	./test_main
+test_tree: test_tree.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attributes.o attributes.hpp
+	g++ ${DEBUG} ${STD} ${CPPFLAGS} -o test_tree test_tree.cpp File.o \
+	       attributes.o obj_object.o -I${GEOSTAR_HOME}/src \
+	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
+
+test: test_tree
+	rm ./test_tree.h5
+	./test_tree
 
 ## REMOVED -lrt from GDAL_LIBS   !!!!!!!!!!!!!!!!!!!
 ## had to do:

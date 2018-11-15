@@ -190,7 +190,7 @@ void OBJ_object::test_read_db(std::string table_name) {
             }
             std::cout << "\n";
         }
-    } else if(table_name = "branch") {
+    } else if(table_name == "branch") {
         while (query.executeStep()) {
             // Demonstrate how to get some typed column value
             std::string centerx      = query.getColumn(0);
@@ -201,9 +201,9 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << endl;
+            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << "\n";
         }//end-while
-    } else if(table_name = "stemend") {
+    } else if(table_name == "stemend") {
         while (query.executeStep()) {
             // Demonstrate how to get some typed column value
             std::string centerx      = query.getColumn(0);
@@ -214,24 +214,24 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << endl;
+            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << "\n";
         }//end-while
 
-    } else if(table_name = "leafA") {
+    } else if(table_name == "leafA") {
         while (query.executeStep())
           {
             // Demonstrate how to get some typed column value
-            std::string string centerx      = query.getColumn(0);
-            std::string string centery      = query.getColumn(1);
-            std::string string centerz      = query.getColumn(2);
-            std::string string radius       = query.getColumn(3);
-            std::string string thickness    = query.getColumn(4);
-            std::string string theta        = query.getColumn(5);
-            std::string string phi          = query.getColumn(6);
+            std::string centerx      = query.getColumn(0);
+            std::string centery      = query.getColumn(1);
+            std::string centerz      = query.getColumn(2);
+            std::string radius       = query.getColumn(3);
+            std::string thickness    = query.getColumn(4);
+            std::string theta        = query.getColumn(5);
+            std::string phi          = query.getColumn(6);
             
-            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << endl;
+            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
         }//end-while
-    } else if(table_name = "leafB") {
+    } else if(table_name == "leafB") {
         while (query.executeStep()){
             // Demonstrate how to get some typed column value
             std::string centerx      = query.getColumn(0);
@@ -242,7 +242,7 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << endl;
+            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
         }//end-while
     }
 }
@@ -340,10 +340,13 @@ void OBJ_object::read_f(std::deque<std::string> components) {
 }
 
 void OBJ_object::read_tree(std::deque<std::string> components, std::string values) {
+    SQLite::Database db = file->open_sqldatabase(db_name);
+    std::string comma = "";
     for(size_t i = 1; i < components.size(); i++) {
-        values = values + components[i];
+        values = values + comma + components[i];
+        comma = ", ";
     }
-    nb = db.exec(values + ")");
+    db.exec(values + ")");
 }
 /*
 void OBJ_object::read_o(std::deque<std::string> components, Group &group) {
@@ -514,33 +517,29 @@ void OBJ_object::write_database(std::deque<std::string> components) {
     */
 
     /////////////////Tree Components/////////////////////
-    else if (data == "branch"){
+    else if (command == "branch"){
         std::string values = "INSERT INTO BRANCH (CENTERX, CENTERY, CENTERZ,\
                               RADIUS, LENGTH, THETA, PHI) VALUES (";
         read_tree(components, values);
 
     }
-    else if (data == "stemend"){
+    else if (command == "stemend"){
         std::string values = "INSERT INTO STEMEND (CENTERX, CENTERY, CENTERZ,\
                               RADIUS, LENGTH, THETA, PHI) VALUES (";
         read_tree(components, values);
 
     }
-    else if (data == "leafA"){
+    else if (command == "leafA"){
         std::string values = "INSERT INTO LEAFA (CENTERX, CENTERY, CENTERZ,\
                               RADIUS, THICKNESS, THETA, PHI) VALUES (";
         read_tree(components, values);
        
     }
-    else if (data == "leafB"){
-        read_leafB(components);
-        std:string values = "INSERT INTO LEAFB (CENTERX, CENTERY, CENTERZ,\
+    else if (command == "leafB"){
+        std::string values = "INSERT INTO LEAFB (CENTERX, CENTERY, CENTERZ,\
                              RADIUS, THICKNESS, THETA, PHI) VALUES (";
         read_tree(components, values);
 
-    }
-    else{
-       break;
     }
 
 }
