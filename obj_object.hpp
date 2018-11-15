@@ -43,6 +43,8 @@ private:
     void read_vn(std::deque<std::string> components);
     void read_vp(std::deque<std::string> components);
     void read_f(std::deque<std::string> components);
+    void read_tree(std::deque<std::string>, std::string values);
+
     /*
     void read_g(std::deque<std::string> components, Group &group);
     void read_s(std::deque<std::string> components, Group &group);

@@ -20,29 +20,29 @@
 void OBJ_object::init() {
     SQLite::Database db = file->open_sqldatabase(db_name);
     db.exec("CREATE TABLE v (x FLOAT, y FLOAT, z FLOAT, w FLOAT, \
-		                     ref_num INTEGER NOT NULL, \
-			                 PRIMARY KEY(x, y, z), \
-							 UNIQUE(ref_num))");
+                             ref_num INTEGER NOT NULL, \
+                             PRIMARY KEY(x, y, z), \
+                             UNIQUE(ref_num))");
     db.exec("CREATE TABLE vn (i FLOAT, j FLOAT, k FLOAT, \
-		                      ref_num INTEGER NOT NULL, \
-			                  PRIMARY KEY(i, j, k), \
-							  UNIQUE(ref_num))");
+                              ref_num INTEGER NOT NULL, \
+                              PRIMARY KEY(i, j, k), \
+                              UNIQUE(ref_num))");
     db.exec("CREATE TABLE vp (u FLOAT, v FLOAT, w FLOAT, \
                               PRIMARY KEY(u, v, w))"); 
-							  //w default to 1.0
+                              //w default to 1.0
     db.exec("CREATE TABLE vt (u FLOAT, v FLOAT, w FLOAT, \
-	                          ref_num INTEGER NOT NULL, \
+                              ref_num INTEGER NOT NULL, \
                               PRIMARY KEY(u, v, w), \
-							  UNIQUE(ref_num))");
-	db.exec("CREATE TABLE fv (v INTEGER, vt INTEGER, vn INTEGER, \
-		                      f_id INTEGER NOT NULL, \
-		                      PRIMARY KEY(v, vt, vn), \
-							  FOREIGN KEY(f_id) REFERENCES f(f_id))");
+                              UNIQUE(ref_num))");
+    db.exec("CREATE TABLE fv (v INTEGER, vt INTEGER, vn INTEGER, \
+                              f_id INTEGER NOT NULL, \
+                              PRIMARY KEY(v, vt, vn), \
+                              FOREIGN KEY(f_id) REFERENCES f(f_id))");
     db.exec("CREATE TABLE f (f_id INTEGER, \
-                      	     PRIMARY KEY(f_id))");
+                               PRIMARY KEY(f_id))");
 
-	//////////////////////Tree components/////////////////////////////
-	db.exec("CREATE TABLE BRANCH("  \
+    //////////////////////Tree components/////////////////////////////
+    db.exec("CREATE TABLE BRANCH("  \
          "CENTERX             STRING      NOT NULL," \
          "CENTERY             STRING      NOT NULL," \
          "CENTERZ             STRING      NOT NULL," \
@@ -167,34 +167,88 @@ void OBJ_object::test_read_db(std::string table_name) {
             double w = query.getColumn(2);
             std::cout << table_name << " " << u << " " << v << " " << w << "\n";
         }        
-	} else if(table_name == "f") {
-		std::deque<int> f_ids;
-		while(query.executeStep()) {
+    } else if(table_name == "f") {
+        std::deque<int> f_ids;
+        while(query.executeStep()) {
             int f_id = query.getColumn(0);
-		    f_ids.push_back(f_id);
-		}
-		for(auto f_id : f_ids) {
-		    SQLite::Database fvdb = file->open_sqldatabase(db_name);
-		    SQLite::Statement fvquery(fvdb, "SELECT v, vt, vn \
-			    	                         FROM fv \
-				    					     WHERE fv.f_id = " +
-											 std::to_string(f_id) +
-					    				     " ORDER BY fv.f_id ASC");
-		    std::cout << table_name << " ";
-		    while(fvquery.executeStep()) {
-			    // v, vt, vn here are all ref_nums
-			    int v = fvquery.getColumn(0);
-			    int vt = fvquery.getColumn(1);
-			    int vn = fvquery.getColumn(2);
-			    std::cout << v << "/" << vt << "/" << vn << " ";
-		    }
-			std::cout << "\n";
-		}
-	}
+            f_ids.push_back(f_id);
+        }
+        for(auto f_id : f_ids) {
+            SQLite::Database fvdb = file->open_sqldatabase(db_name);
+            SQLite::Statement fvquery(fvdb, "SELECT v, vt, vn \
+                                             FROM fv \
+                                             WHERE fv.f_id = " +
+                                             std::to_string(f_id) +
+                                             " ORDER BY fv.f_id ASC");
+            std::cout << table_name << " ";
+            while(fvquery.executeStep()) {
+                // v, vt, vn here are all ref_nums
+                int v = fvquery.getColumn(0);
+                int vt = fvquery.getColumn(1);
+                int vn = fvquery.getColumn(2);
+                std::cout << v << "/" << vt << "/" << vn << " ";
+            }
+            std::cout << "\n";
+        }
+    } else if(table_name = "branch") {
+        while (query.executeStep()) {
+            // Demonstrate how to get some typed column value
+            std::string centerx      = query.getColumn(0);
+            std::string centery      = query.getColumn(1);
+            std::string centerz      = query.getColumn(2);
+            std::string radius       = query.getColumn(3);
+            std::string length       = query.getColumn(4);
+            std::string theta        = query.getColumn(5);
+            std::string phi          = query.getColumn(6);
+            
+            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << endl;
+        }//end-while
+    } else if(table_name = "stemend") {
+        while (query.executeStep()) {
+            // Demonstrate how to get some typed column value
+            std::string centerx      = query.getColumn(0);
+            std::string centery      = query.getColumn(1);
+            std::string centerz      = query.getColumn(2);
+            std::string radius       = query.getColumn(3);
+            std::string length       = query.getColumn(4);
+            std::string theta        = query.getColumn(5);
+            std::string phi          = query.getColumn(6);
+            
+            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << endl;
+        }//end-while
+
+    } else if(table_name = "leafA") {
+        while (query.executeStep())
+          {
+            // Demonstrate how to get some typed column value
+            std::string string centerx      = query.getColumn(0);
+            std::string string centery      = query.getColumn(1);
+            std::string string centerz      = query.getColumn(2);
+            std::string string radius       = query.getColumn(3);
+            std::string string thickness    = query.getColumn(4);
+            std::string string theta        = query.getColumn(5);
+            std::string string phi          = query.getColumn(6);
+            
+            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << endl;
+        }//end-while
+    } else if(table_name = "leafB") {
+        while (query.executeStep()){
+            // Demonstrate how to get some typed column value
+            std::string centerx      = query.getColumn(0);
+            std::string centery      = query.getColumn(1);
+            std::string centerz      = query.getColumn(2);
+            std::string radius       = query.getColumn(3);
+            std::string thickness    = query.getColumn(4);
+            std::string theta        = query.getColumn(5);
+            std::string phi          = query.getColumn(6);
+            
+            cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << endl;
+        }//end-while
+    }
 }
 
 void OBJ_object::read_v(std::deque<std::string> components) {
-	static int v_ref_num = 0;
+    static int v_ref_num = 0;
     SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "(" + components[1] + ", " + components[2] + ", " + components[3]; 
     if(components.size() == 5) {
@@ -204,13 +258,13 @@ void OBJ_object::read_v(std::deque<std::string> components) {
         values = values + ", " + std::to_string(1.0);
     }
     db.exec("INSERT INTO v VALUES" + values + ", " + 
-			std::to_string(v_ref_num) + ")");
-	v_ref_num ++;
+            std::to_string(v_ref_num) + ")");
+    v_ref_num ++;
 }
 
 void OBJ_object::read_vt(std::deque<std::string> components) {
     static int vt_ref_num = 0;
-	SQLite::Database db = file->open_sqldatabase(db_name);
+    SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
     std::string comma = "";
     for(size_t i = 1; i < components.size(); ++ i) {
@@ -229,13 +283,13 @@ void OBJ_object::read_vt(std::deque<std::string> components) {
     std::cout << values << "\n";
 #endif
     db.exec("INSERT INTO vt VALUES" + values + ", " + 
-			std::to_string(vt_ref_num) + ")");
-	vt_ref_num ++;
+            std::to_string(vt_ref_num) + ")");
+    vt_ref_num ++;
 }
 
 void OBJ_object::read_vn(std::deque<std::string> components) {
     static int vn_ref_num = 0;
-	SQLite::Database db = file->open_sqldatabase(db_name);
+    SQLite::Database db = file->open_sqldatabase(db_name);
     std::string values = "("; 
     std::string comma = "";
     for(size_t i = 1; i < components.size(); ++ i) {
@@ -246,7 +300,7 @@ void OBJ_object::read_vn(std::deque<std::string> components) {
     std::cout << values << "\n";
 #endif
     db.exec("INSERT INTO vn VALUES" + values + ", " + 
-			 std::to_string(vn_ref_num) + ")");
+             std::to_string(vn_ref_num) + ")");
     vn_ref_num ++;
 }
 
@@ -259,8 +313,8 @@ void OBJ_object::read_vp(std::deque<std::string> components) {
         comma = ", ";
     }
 #ifdef DEBUG 
-	std::cout << values << "\n";
-	std::cout << components.size() << "\n";
+    std::cout << values << "\n";
+    std::cout << components.size() << "\n";
 #endif
     if(components.size() == 3) {
         values = values + ", 1.0";
@@ -270,19 +324,26 @@ void OBJ_object::read_vp(std::deque<std::string> components) {
 
 
 void OBJ_object::read_f(std::deque<std::string> components) {
-	SQLite::Database db = file->open_sqldatabase(db_name);
-	static int f_id = 0;
-	db.exec("INSERT INTO f VALUES(" + std::to_string(f_id) + ")");
+    SQLite::Database db = file->open_sqldatabase(db_name);
+    static int f_id = 0;
+    db.exec("INSERT INTO f VALUES(" + std::to_string(f_id) + ")");
     for(size_t i = 1; i < components.size(); ++ i) {
         std::deque<std::string> elements;
-		std::string values = "INSERT INTO fv VALUES(";
+        std::string values = "INSERT INTO fv VALUES(";
         boost::split(elements, components[i], boost::is_any_of("/"));
         for(auto element : elements) {
             values = values + element + ", ";
         }
-		db.exec(values + std::to_string(f_id) + ")");
+        db.exec(values + std::to_string(f_id) + ")");
     }
-	f_id ++;
+    f_id ++;
+}
+
+void OBJ_object::read_tree(std::deque<std::string> components, std::string values) {
+    for(size_t i = 1; i < components.size(); i++) {
+        values = values + components[i];
+    }
+    nb = db.exec(values + ")");
 }
 /*
 void OBJ_object::read_o(std::deque<std::string> components, Group &group) {
@@ -356,7 +417,7 @@ void OBJ_object::read_mtllib(std::string &values,
 void OBJ_object::write_database(std::deque<std::string> components) {
     // use line numebr as the unique id
     std::string table_name = "";
-    std::string values = "(";
+    std::string values = "";
     std::string command = components[0];
     Group group;
     // Vertex data line 251
@@ -388,8 +449,7 @@ void OBJ_object::write_database(std::deque<std::string> components) {
         break;
     case("l"): //line
         break; */
-    else if("f") { //face
-        table_name = "f";
+    else if(command == "f") { //face
         read_f(components);
     }/*
     case("curv"): //curve
@@ -454,74 +514,34 @@ void OBJ_object::write_database(std::deque<std::string> components) {
     */
 
     /////////////////Tree Components/////////////////////
-    if (data == "branch"){
-	   line >> centerx;
-	   line >> centery;
-	   line >> centerz;
-		line >> radius;
-	   line >> length;
-	   line >> theta;
-	   line >> phi;
+    else if (data == "branch"){
+        std::string values = "INSERT INTO BRANCH (CENTERX, CENTERY, CENTERZ,\
+                              RADIUS, LENGTH, THETA, PHI) VALUES (";
+        read_tree(components, values);
 
-	   nb = db.exec("INSERT INTO BRANCH (CENTERX, CENTERY, CENTERZ,\
-	   RADIUS, LENGTH, THETA, PHI) VALUES (" + centerx +", "+
-	   centery +", "+ centerz+", "+ radius +
-	   ", "+ length +", "+ theta + ", "+ phi+")");
+    }
+    else if (data == "stemend"){
+        std::string values = "INSERT INTO STEMEND (CENTERX, CENTERY, CENTERZ,\
+                              RADIUS, LENGTH, THETA, PHI) VALUES (";
+        read_tree(components, values);
 
-	   break;
-	}
-	else if (data == "stemend"){
-	   line >> centerx;
-	   line >> centery;
-	   line >> centerz;
-	   line >> radius;
-	   line >> length;
-	   line >> theta;
-	   line >> phi;
+    }
+    else if (data == "leafA"){
+        std::string values = "INSERT INTO LEAFA (CENTERX, CENTERY, CENTERZ,\
+                              RADIUS, THICKNESS, THETA, PHI) VALUES (";
+        read_tree(components, values);
+       
+    }
+    else if (data == "leafB"){
+        read_leafB(components);
+        std:string values = "INSERT INTO LEAFB (CENTERX, CENTERY, CENTERZ,\
+                             RADIUS, THICKNESS, THETA, PHI) VALUES (";
+        read_tree(components, values);
 
-	   db.exec("INSERT INTO STEMEND (CENTERX, CENTERY, CENTERZ,\
-	   RADIUS, LENGTH, THETA, PHI) VALUES (" + centerx +", "+
-	   centery +", "+ centerz+", "+ radius +
-	   ", "+ length +", "+ theta + ", "+ phi+")");
-	   
-	   break;
-	}
-	else if (data == "leafA"){
-	   line >> centerx;
-	   line >> centery;
-	   line >> centerz;
-	   line >> radius;
-	   line >> thickness;
-	   line >> theta;
-	   line >> phi;
-
-	   db.exec("INSERT INTO LEAFA (CENTERX, CENTERY, CENTERZ,\
-	   RADIUS, THICKNESS, THETA, PHI) VALUES (" + centerx +", "+
-	   centery +", "+ centerz+", "+ radius +
-	   ", "+ thickness +", "+ theta + ", "+ phi+")");
-
-	   break;
-	   
-	}
-	else if (data == "leafB"){
-	   line >> centerx;
-	   line >> centery;
-	   line >> centerz;
-	   line >> radius;
-	   line >> thickness;
-	   line >> theta;
-	   line >> phi;
-
-	   db.exec("INSERT INTO LEAFB (CENTERX, CENTERY, CENTERZ,\
-	   RADIUS, THICKNESS, THETA, PHI) VALUES (" + centerx +", "+
-	   centery +", "+ centerz+", "+ radius +
-	   ", "+ thickness +", "+ theta + ", "+ phi+")");
-
-	   break;
-	}
-	else{
-	   break;
-	}
+    }
+    else{
+       break;
+    }
 
 }
 
