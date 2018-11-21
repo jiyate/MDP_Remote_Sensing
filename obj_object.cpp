@@ -135,37 +135,38 @@ std::deque<std::string> OBJ_object::parse_line(std::string obj_file_line) {
     return result;
 }
 
-void OBJ_object::test_read_db(std::string table_name) {
+std::stringstream OBJ_object::test_read_db(std::string table_name) {
     SQLite::Database db = file->open_sqldatabase(db_name);
     SQLite::Statement query(db, "SELECT * FROM " + table_name);
+	std::stringstream out;
     if(table_name == "v") {
         while(query.executeStep()) {
             double x = query.getColumn(0);
             double y = query.getColumn(1);
             double z = query.getColumn(2);
             double w = query.getColumn(3);
-            std::cout << table_name << " " << x << " " << y << " " << z << " " << w << "\n";
+            out << table_name << " " << x << " " << y << " " << z << " " << w << "\n";
         }
     } else if(table_name == "vn") {
         while(query.executeStep()) {
             double i = query.getColumn(0);
             double j = query.getColumn(1);
             double k = query.getColumn(2);
-            std::cout << table_name << " " << i << " " << j << " " << k << "\n";
+            out << table_name << " " << i << " " << j << " " << k << "\n";
         }
     } else if(table_name == "vt") {
         while(query.executeStep()) {
             double u = query.getColumn(0);
             double v = query.getColumn(1);
             double w = query.getColumn(2);
-            std::cout << table_name << " " << u << " " << v << " " << w << "\n";
+            out << table_name << " " << u << " " << v << " " << w << "\n";
         }        
     } else if(table_name == "vp") {
         while(query.executeStep()) {
             double u = query.getColumn(0);
             double v = query.getColumn(1);
             double w = query.getColumn(2);
-            std::cout << table_name << " " << u << " " << v << " " << w << "\n";
+            out << table_name << " " << u << " " << v << " " << w << "\n";
         }        
     } else if(table_name == "f") {
         std::deque<int> f_ids;
@@ -180,15 +181,15 @@ void OBJ_object::test_read_db(std::string table_name) {
                                              WHERE fv.f_id = " +
                                              std::to_string(f_id) +
                                              " ORDER BY fv.f_id ASC");
-            std::cout << table_name << " ";
+            out << table_name << " ";
             while(fvquery.executeStep()) {
                 // v, vt, vn here are all ref_nums
                 int v = fvquery.getColumn(0);
                 int vt = fvquery.getColumn(1);
                 int vn = fvquery.getColumn(2);
-                std::cout << v << "/" << vt << "/" << vn << " ";
+                out << v << "/" << vt << "/" << vn << " ";
             }
-            std::cout << "\n";
+            out << "\n";
         }
     } else if(table_name == "branch") {
         while (query.executeStep()) {
@@ -201,7 +202,7 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << "\n";
+            out << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << "\n";
         }//end-while
     } else if(table_name == "stemend") {
         while (query.executeStep()) {
@@ -214,7 +215,7 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << "\n";
+            out << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << length << " " << theta << " " << phi << "\n";
         }//end-while
 
     } else if(table_name == "leafA") {
@@ -229,7 +230,7 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
+            out << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
         }//end-while
     } else if(table_name == "leafB") {
         while (query.executeStep()){
@@ -242,7 +243,7 @@ void OBJ_object::test_read_db(std::string table_name) {
             std::string theta        = query.getColumn(5);
             std::string phi          = query.getColumn(6);
             
-            std::cout << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
+            out << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
         }//end-while
     }
 }

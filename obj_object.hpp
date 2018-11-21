@@ -1,5 +1,5 @@
-#ifndef OBJ_OBJECT_
-#define OBJ_OBJECT_
+#ifndef OBJ_OBJECT_H
+#define OBJ_OBJECT_H
 
 #include <string>
 #include <iostream>
@@ -12,6 +12,7 @@
 #include <spatialite/gaiageo.h>
 #include <spatialite.h>
 #include <deque>
+#include <sstream>
 
 struct Group {
     std::string group_type = "";
@@ -30,7 +31,7 @@ public:
     OBJ_object(std::string filename);
     ~OBJ_object();
     void read_obj_file(std::string filename);
-    void test_read_db(std::string table_name);
+	std::stringstream test_read_db(std::string table_name);
 private:
     GeoStar::File *file;
     std::string db_name;
@@ -50,7 +51,7 @@ private:
     void read_s(std::deque<std::string> components, Group &group);
 
     void read_o(std::deque<std::string> components, Group &group);
-    void read_mg(std::deque<std::string> components, Group &group);
+    void read_mg(std::deque<std::string> components, Group &group);		
     void read_usemtl(std::deque<std::string> components);
     void read_mtllib(std::deque<std::string> components);
     */
