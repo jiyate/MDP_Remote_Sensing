@@ -2,6 +2,7 @@
 #include <sstream>
 #include <fstream>
 #include "obj_object.hpp"
+#include "Exporter.hpp"
 
 void Exporter::export_to(std::string filename) {
 	std::ofstream outfile;

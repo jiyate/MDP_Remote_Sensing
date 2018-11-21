@@ -246,6 +246,7 @@ std::stringstream OBJ_object::test_read_db(std::string table_name) {
             out << table_name << " " << centerx << " " << centery << " " << centerz << " " << radius << " " << thickness << " " << theta << " " << phi << "\n";
         }//end-while
     }
+	return out;
 }
 
 void OBJ_object::read_v(std::deque<std::string> components) {

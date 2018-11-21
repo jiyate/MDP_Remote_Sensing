@@ -166,19 +166,27 @@ Shape.o: Shape.cpp Shape.hpp File.hpp Exceptions.hpp attributes.hpp
 obj_object.o: obj_object.cpp obj_object.hpp File.hpp Exceptions.hpp attributes.hpp
 	g++ ${DEBUG} ${STD} ${CPPFLAGS} -c -o obj_object.o obj_object.cpp ${INCL} #${CPPDEBUG}
 
+Importer.o: Importer.cpp Importer.hpp File.hpp Exceptions.hpp attributes.hpp
+	g++ ${DEBUG} ${STD} ${CPPFLAGS} -c -o Importer.o Importer.cpp ${INCL} #${CPPDEBUG}
+
+
+Exporter.o: Exporter.cpp Exporter.hpp File.hpp Exceptions.hpp attributes.hpp
+	g++ ${DEBUG} ${STD} ${CPPFLAGS} -c -o Exporter.o Exporter.cpp ${INCL} #${CPPDEBUG}
+
+
 
 
 ##Ifile.o: Ifile.cpp File.hpp Exceptions.hpp attributes.hpp
 ##	g++ ${DEBUG} ${STD} ${CPPFLAGS} -c -o Ifile.o Ifile.cpp ${INCL}
 
-test_main: test_main.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attributes.o attributes.hpp
+test_main: test_main.cpp Importer.o Importer.hpp Exporter.o Exporter.hpp obj_object.o obj_object.hpp File.o Exceptions.hpp attributes.o attributes.hpp
 	g++ ${DEBUG} ${STD} ${CPPFLAGS} -o test_main test_main.cpp File.o \
-	       attributes.o obj_object.o -I${GEOSTAR_HOME}/src \
+	       attributes.o obj_object.o Importer.o Exporter.o -I${GEOSTAR_HOME}/src \
 	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
 
-test_tree: test_tree.cpp obj_object.o obj_object.hpp File.o Exceptions.hpp attributes.o attributes.hpp
+test_tree: test_tree.cpp Importer.o Importer.hpp Exporter.o Exporter.hpp obj_object.o obj_object.hpp File.o Exceptions.hpp attributes.o attributes.hpp
 	g++ ${DEBUG} ${STD} ${CPPFLAGS} -o test_tree test_tree.cpp File.o \
-	       attributes.o obj_object.o -I${GEOSTAR_HOME}/src \
+	       attributes.o obj_object.o Importer.o Exporter.o -I${GEOSTAR_HOME}/src \
 	     ${INCL} ${IFILE_LIBRARIES} ${LIBS} ${LIBS}
 
 test: test_tree

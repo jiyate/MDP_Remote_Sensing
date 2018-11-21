@@ -1,13 +1,14 @@
 #include "obj_object.hpp"
+#include "Importer.hpp"
+#include "Exporter.hpp"
 #include <string>
 
 int main(int argc, char** argv) {
     //std::string filename = argv[1];
-	OBJ_object test_obj("test.h5");
-	test_obj.read_obj_file("test.obj");
-	test_obj.test_read_db("v");
-	test_obj.test_read_db("vt");
-	test_obj.test_read_db("vn");
-	test_obj.test_read_db("vp");
-	test_obj.test_read_db("f");
+	OBJ_object obj_obj("test.h5");
+	OBJ_object *obj_ptr = &obj_obj;
+	Importer imp(obj_ptr);
+	imp.read_file("test.obj");
+	Exporter exp(obj_ptr);
+	exp.export_to("test.out");
 }
