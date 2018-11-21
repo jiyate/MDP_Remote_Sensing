@@ -20,10 +20,12 @@ struct Group {
     bool valid = false;
 };
 
-struct Ref_num {
-	long v;
-	long vt;
-	long vn;
+class Key {
+public:
+    Key();
+private:
+    std::deque<std::string> keys_attribute;
+    
 };
 
 class OBJ_object {

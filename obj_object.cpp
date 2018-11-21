@@ -42,7 +42,8 @@ void OBJ_object::init() {
                                PRIMARY KEY(f_id))");
 
     //////////////////////Tree components/////////////////////////////
-    db.exec("CREATE TABLE BRANCH("  \
+    // Query: Nearby, Connected, Parent/Child
+ 	db.exec("CREATE TABLE BRANCH("  \
          "CENTERX             STRING      NOT NULL," \
          "CENTERY             STRING      NOT NULL," \
          "CENTERZ             STRING      NOT NULL," \
@@ -59,7 +60,7 @@ void OBJ_object::init() {
          "LENGTH              STRING     NOT NULL," \
          "THETA               STRING     NOT NULL," \
          "PHI                 STRING     NOT NULL)");
-
+   // add Center
    db.exec("CREATE TABLE NEEDLE("  \
          "STARTX              STRING     NOT NULL," \
          "STARTY              STRING     NOT NULL," \
