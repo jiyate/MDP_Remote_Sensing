@@ -37,7 +37,10 @@ void OBJ_object::init() {
     db.exec("CREATE TABLE fv (v INTEGER, vt INTEGER, vn INTEGER, \
                               f_id INTEGER NOT NULL, \
                               PRIMARY KEY(v, vt, vn), \
-                              FOREIGN KEY(f_id) REFERENCES f(f_id))");
+                              FOREIGN KEY(f_id) REFERENCES f(f_id)), \
+                              FOREIGN KEY(v) REFERENCES v(ref_num), \
+                              FOREIGN KEY(vt) REFERENCES vt(ref_num), \
+                              FOREIGN KEY(vn) REFERENCES vn(ref_num))");
     db.exec("CREATE TABLE f (f_id INTEGER, \
                                PRIMARY KEY(f_id))");
 
